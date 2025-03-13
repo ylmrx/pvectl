@@ -35,12 +35,17 @@ class OutputFormats(Enum):
     def __str__(self):
         return self.value
 
-def click_add_table_related_arguments(fn):
-    # print(columns)
-    # print(default)
-    fn = click.option('-x')
-    fn = click.option('-w')
-    return fn
+
+def add_table_options(columns, default):
+    def _add_options(func):
+        func = click.option('--sort-by', type=click.Choice(columns), default=default,
+            show_default=True, help='Key used to sort items')(func)
+        func = click.option('--columns', type=str, default=','.join(columns),
+            show_default=True, help='Comma-separated list of columns')(func)
+        func = click.option('--filter', type=str, default=('',''), nargs=2,
+            help="Regex to filter items: colum regexp")(func)
+        return func
+    return _add_options
 
 def terminal_support_colors():
     if os.getenv("NO_COLOR"):

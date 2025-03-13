@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from pvecontrol.utils import print_task, print_output, click_add_table_related_arguments
+from pvecontrol.utils import print_task, print_output, add_table_options
 import click
 from pvecontrol.models import vm
 
@@ -62,22 +62,20 @@ def action_vmmigrate(proxmox, args):
         print("Dry run, skipping migration")
 
 
-def add_options(columns, default):
-    def _add_options(func):
-        func = click.option('--sort-by', type=click.Choice(columns), default=default,
-                            help='Key used to sort items')(func)
-        func = click.option('--columns', )
-        return func
-    return _add_options
-
 @click.command()
 # @click_add_table_related_arguments(columns=vm.COLUMNS, default='vmid')
 # @click_add_table_related_arguments
-@add_options(vm.COLUMNS, 'vmid')
+@add_table_options(vm.COLUMNS, 'vmid')
 @click.pass_context
-def action_vmlist(ctx):
+def action_vmlist(ctx, sort_by, columns, filter):
     """List VMs in the Proxmox Cluster"""
     proxmox = ctx.obj['CLUSTER']
     args = ctx.obj['ARGS']
     vms = proxmox.vms
-    print_output(vms, columns=args.columns, sortby=args.sort_by, filters=args.filter, output=args.output)
+    _cols = columns.split(',')
+    if all([field == '' for field in filter]):
+        filter = None
+    if all([col in vm.COLUMNS for col in _cols]):
+        print_output(vms, columns=_cols, sortby=sort_by, filters=filter, output=args.output)
+    else:
+        print(f"A requested column ({', '.join(_cols)}) doesn't exist, among :{', '.join(vm.COLUMNS)}")
