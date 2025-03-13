@@ -8,6 +8,7 @@ import os
 
 from collections import OrderedDict
 from enum import Enum
+import click
 
 import yaml
 
@@ -34,6 +35,12 @@ class OutputFormats(Enum):
     def __str__(self):
         return self.value
 
+def click_add_table_related_arguments(fn):
+    # print(columns)
+    # print(default)
+    fn = click.option('-x')
+    fn = click.option('-w')
+    return fn
 
 def terminal_support_colors():
     if os.getenv("NO_COLOR"):

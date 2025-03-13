@@ -226,12 +226,14 @@ def run_auth_commands(clusterconfig):
 @click.option('-o', '--output', type=click.Choice([o.value for o in OutputFormats]))
 @click.option('-c', '--cluster', required=True,
     help="Proxmox cluster name as defined in configuration")
-def main(verbose, debug, output, cluster):
+@click.pass_context
+def main(ctx, verbose, debug, output, cluster):
     # Disable urllib3 warnings about invalid certs
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     # get cli arguments
     args = argparse.Namespace(verbose=verbose, debug=debug, output=output, cluster=cluster)
+    
 
     if hasattr(args, "columns"):
         if not args.sort_by is None and not args.sort_by in args.columns:
@@ -261,8 +263,12 @@ def main(verbose, debug, output, cluster):
         timeout=clusterconfig.timeout,
         **auth,
     )
+    ctx.ensure_object(dict)
 
-    args.func(proxmoxcluster, args)
+    ctx.obj['CLUSTER'] = proxmoxcluster
+    ctx.obj['ARGS'] = args
+
+    # args.func(proxmoxcluster, args)
 
 
 main.add_command(cmd=actions.vm.action_vmlist, name='vmlist')
