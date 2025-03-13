@@ -224,7 +224,7 @@ def run_auth_commands(clusterconfig):
 @click.option('-v', '--verbose')
 @click.option('-d', '--debug')
 @click.option('-o', '--output', type=click.Choice([o.value for o in OutputFormats]), show_default=True,
-    default=OutputFormats.TEXT.value)
+    default=OutputFormats.TEXT, callback=lambda *v: OutputFormats(v[2]))
 @click.option('-c', '--cluster', required=True,
     help="Proxmox cluster name as defined in configuration")
 @click.pass_context
@@ -232,6 +232,7 @@ def main(ctx, verbose, debug, output, cluster):
     print(output)
     # Disable urllib3 warnings about invalid certs
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    # output = OutputFormats(output)
 
     # get cli arguments
     args = argparse.Namespace(verbose=verbose, debug=debug, output=output, cluster=cluster)

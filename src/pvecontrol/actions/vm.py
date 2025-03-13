@@ -76,6 +76,6 @@ def action_vmlist(ctx, sort_by, columns, filter):
     if all([field == '' for field in filter]):
         filter = None
     if all([col in vm.COLUMNS for col in _cols]):
-        print_output(vms, columns=_cols, sortby=sort_by, filters=filter, output=args.output)
+        print_output(vms, columns=_cols, sortby=sort_by, filters=[filter], output=args.output)
     else:
         print(f"A requested column ({', '.join(_cols)}) doesn't exist, among :{', '.join(vm.COLUMNS)}")
