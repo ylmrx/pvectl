@@ -63,19 +63,9 @@ def action_vmmigrate(proxmox, args):
 
 
 @click.command()
-# @click_add_table_related_arguments(columns=vm.COLUMNS, default='vmid')
-# @click_add_table_related_arguments
 @add_table_options(vm.COLUMNS, 'vmid')
 @click.pass_context
 def action_vmlist(ctx, sort_by, columns, filter):
     """List VMs in the Proxmox Cluster"""
-    proxmox = ctx.obj['CLUSTER']
-    args = ctx.obj['ARGS']
-    vms = proxmox.vms
-    _cols = columns.split(',')
-    if all([field == '' for field in filter]):
-        filter = None
-    if all([col in vm.COLUMNS for col in _cols]):
-        print_output(vms, columns=_cols, sortby=sort_by, filters=[filter], output=args.output)
-    else:
-        print(f"A requested column ({', '.join(_cols)}) doesn't exist, among :{', '.join(vm.COLUMNS)}")
+    print_output(ctx.obj['cluster'].vms, columns=columns, sortby=sort_by,
+        filters=filter, output=ctx.obj['args'].output)
