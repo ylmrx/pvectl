@@ -9,6 +9,7 @@ import json
 
 from importlib.metadata import version
 
+import click.shell_completion
 import urllib3
 import shtab
 
@@ -19,6 +20,7 @@ from pvecontrol.models.cluster import PVECluster
 from pvecontrol.sanitycheck.tests import DEFAULT_CHECK_IDS
 from pvecontrol.utils import OutputFormats
 
+import click
 
 def action_test(proxmox, _args):
     """Hidden optional test action"""
@@ -216,12 +218,20 @@ def run_auth_commands(clusterconfig):
     return auth
 
 
-def main():
+@click.group(
+    help=f"Proxmox VE control CLI, version: {version(__name__)}",
+    epilog="Made with love by Enix.io")
+@click.option('-v', '--verbose')
+@click.option('-d', '--debug')
+@click.option('-o', '--output', type=click.Choice([o.value for o in OutputFormats]))
+@click.option('-c', '--cluster', required=True,
+    help="Proxmox cluster name as defined in configuration")
+def main(verbose, debug, output, cluster):
     # Disable urllib3 warnings about invalid certs
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     # get cli arguments
-    args = _parser()
+    args = argparse.Namespace(verbose=verbose, debug=debug, output=output, cluster=cluster)
 
     if hasattr(args, "columns"):
         if not args.sort_by is None and not args.sort_by in args.columns:
@@ -255,5 +265,6 @@ def main():
     args.func(proxmoxcluster, args)
 
 
+main.add_command(cmd=actions.vm.action_vmlist, name='vmlist')
 if __name__ == "__main__":
     sys.exit(main())

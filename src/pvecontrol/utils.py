@@ -12,7 +12,7 @@ from enum import Enum
 import yaml
 
 from humanize import naturalsize
-from prettytable import PrettyTable
+from prettytable import PrettyTable, TableStyle
 
 
 class Fonts:
