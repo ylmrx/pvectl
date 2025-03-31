@@ -1,7 +1,6 @@
 from enum import Enum
 
-
-COLUMNS = ["vmid", "name", "status", "node", "cpus", "maxmem", "maxdisk", "tags"]
+from pvecontrol.models import PVEBase
 
 
 class VmStatus(Enum):
@@ -13,30 +12,19 @@ class VmStatus(Enum):
     PRELAUNCH = 5
 
 
-class PVEVm:
+class PVEVm(PVEBase):
     """Proxmox VE Qemu VM"""
 
     _api = None
+    columns = ["vmid", "name", "status", "node", ("maxcpu", "cpus"), "maxmem", "maxdisk", "tags"]
 
     def __init__(self, api, node, vmid, status, kwargs=None):
-        if not kwargs:
-            kwargs = {}
+        super().__init__(**kwargs)
 
         self.vmid = vmid
         self.status = VmStatus[status.upper()]
         self.node = node
         self._api = api
-
-        self.name = kwargs.get("name", "")
-        self.lock = kwargs.get("lock", "")
-        self.cpus = kwargs.get("maxcpu", 0)
-        self.maxdisk = kwargs.get("maxdisk", 0)
-        self.maxmem = kwargs.get("maxmem", 0)
-        self.uptime = kwargs.get("uptime", 0)
-        self.tags = set(filter(None, kwargs.get("tags", "").split(";")))
-        self.template = kwargs.get("template", 0)
-        self.pool = kwargs.get("pool", "")
-
         self._config = None
 
     @property

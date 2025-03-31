@@ -65,13 +65,14 @@ NATURALSIZE_KEYS = [
     "maxdisk",
 ]
 
+singlize_cols = lambda cols: map(lambda x: x[1] if isinstance(x, tuple) else x, cols)
 
 def render_output(table, columns=None, sortby=None, filters=None, output=OutputFormats.TEXT):
     if not columns:
         columns = []
     if not filters:
         filters = []
-
+    columns = list(singlize_cols(columns))
     if len(columns) == 0:
         columns = table[0].keys()
     else:
@@ -133,6 +134,7 @@ def print_output(table, columns=None, sortby=None, filters=None, output=OutputFo
 
 def filter_keys(input_d, keys):
     # Filter keys from input dict
+    keys = singlize_cols(keys)
     output = OrderedDict()
     for key in keys:
         output[key] = input_d[key]

@@ -128,7 +128,7 @@ def _parser():
 
     # vmlist parser
     parser_vmlist = subparsers.add_parser("vmlist", help="List VMs in the cluster")
-    add_table_related_arguments(parser_vmlist, vm.COLUMNS, "vmid")
+    add_table_related_arguments(parser_vmlist, vm.PVEVm.columns, "vmid")
     parser_vmlist.set_defaults(func=actions.vm.action_vmlist)
     # vmmigrate parser
     parser_vmmigrate = subparsers.add_parser("vmmigrate", help="Migrate VMs in the cluster")
