@@ -1,9 +1,7 @@
 from enum import Enum
 
+from pvecontrol.models import PVEBase
 from pvecontrol.models.vm import PVEVm, VmStatus
-
-
-COLUMNS = ["node", "status", "allocatedcpu", "maxcpu", "mem", "allocatedmem", "maxmem"]
 
 
 class NodeStatus(Enum):
@@ -12,24 +10,17 @@ class NodeStatus(Enum):
     OFFLINE = 2
 
 
-class PVENode:
+class PVENode(PVEBase):
     """A proxmox VE Node"""
-
+    columns = ["node", "status", "allocatedcpu", "maxcpu", "mem", "allocatedmem", "maxmem"]
     def __init__(self, cluster, node, status, kwargs=None):
-        if not kwargs:
-            kwargs = {}
+        super().__init__(**kwargs)
 
         self.node = node
         self.status = NodeStatus[status.upper()]
         self.cluster = cluster
-        self.cpu = kwargs.get("cpu", 0)
         self.allocatedcpu = 0
-        self.maxcpu = kwargs.get("maxcpu", 0)
-        self.mem = kwargs.get("mem", 0)
         self.allocatedmem = 0
-        self.maxmem = kwargs.get("maxmem", 0)
-        self.disk = kwargs.get("disk", 0)
-        self.maxdisk = kwargs.get("maxdisk", 0)
         self._init_vms()
         self._init_allocatedmem()
         self._init_allocatedcpu()

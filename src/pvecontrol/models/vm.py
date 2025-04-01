@@ -14,7 +14,6 @@ class VmStatus(Enum):
 
 class PVEVm(PVEBase):
     """Proxmox VE Qemu VM"""
-
     _api = None
     columns = ["vmid", "name", "status", "node", ("maxcpu", "cpus"), "maxmem", "maxdisk", "tags"]
 

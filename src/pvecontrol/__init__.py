@@ -106,7 +106,7 @@ def _parser():
 
     # nodelist parser
     parser_nodelist = subparsers.add_parser("nodelist", help="List nodes in the cluster")
-    add_table_related_arguments(parser_nodelist, node.COLUMNS, "node")
+    add_table_related_arguments(parser_nodelist, node.PVENode.columns, "node")
     parser_nodelist.set_defaults(func=actions.node.action_nodelist)
     # nodeevacuate parser
     parser_nodeevacuate = subparsers.add_parser("nodeevacuate", help="Evacuate an host by migrating all VMs")
